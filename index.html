@@ -1,29 +1,23 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gestión de Pedidos</title>
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-  <body>
-    <div class="container">
-      <h1>Pedidos de Combos</h1>
-      <button id="nuevo-combo" class="btn">+ Nuevo Pedido</button>
-
-      <div class="filtros">
-        <input
-          type="text"
-          id="buscar-cliente"
-          placeholder="Buscar por cliente..."
-        />
-        <button id="btn-buscar" class="btn">Buscar</button>
-      </div>
-
-      <div id="lista-combos" class="combos-list"></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestión de Pedidos</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Pedidos de Combos</h1>
+    <button id="nuevo-combo" class="btn">+ Nuevo Pedido</button>
+    
+    <div class="filtros">
+      <input type="text" id="buscar-cliente" placeholder="Buscar por cliente...">
+      <button id="btn-buscar" class="btn">Buscar</button>
     </div>
-    <script src="js/database.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/combos.js"></script>
-  </body>
+    
+    <div id="lista-combos" class="combos-list"></div>
+  </div>
+  <script src="js/app.js"></script>
+</body>
 </html>
