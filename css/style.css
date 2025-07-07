@@ -1,0 +1,237 @@
+/* Estilos generales */
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  margin: 0;
+  padding: 20px;
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Botones */
+.btn {
+  display: inline-block;
+  background: #4caf50;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.btn:hover {
+  background: #45a049;
+}
+
+.btn-primary {
+  background: #2196f3;
+}
+
+.btn-primary:hover {
+  background: #0b7dda;
+}
+
+.btn-danger {
+  background: #f44336;
+}
+
+.btn-danger:hover {
+  background: #d32f2f;
+}
+
+/* Formularios */
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+/* Lista de combos */
+.combos-list {
+  margin-top: 20px;
+}
+
+.combo-card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 10px;
+  transition: transform 0.2s;
+}
+
+.combo-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.combo-card h3 {
+  margin-top: 0;
+  color: #2196f3;
+}
+
+.combo-card p {
+  margin: 5px 0;
+}
+
+/* Tabla de productos */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+th,
+td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* Totales */
+.totales {
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 4px;
+  margin-top: 20px;
+}
+
+.totales p {
+  margin: 5px 0;
+  font-size: 16px;
+}
+
+.totales h3 {
+  margin-top: 0;
+}
+
+.cliente-info {
+  background: #f0f8ff;
+  padding: 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+/* Productos */
+.producto-container {
+  margin-bottom: 20px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  padding: 15px;
+  background: #fff;
+}
+
+.producto-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.producto-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 15px;
+}
+
+.producto-item {
+  margin-bottom: 10px;
+}
+
+.producto-item label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.producto-item input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.producto-eliminar {
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+/* Filtros */
+.filtros {
+  display: flex;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.filtros input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/* Mensajes */
+.mensaje {
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 4px;
+}
+
+.mensaje-exito {
+  background: #dff0d8;
+  color: #3c763d;
+}
+
+.mensaje-error {
+  background: #f2dede;
+  color: #a94442;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .producto-content {
+    grid-template-columns: 1fr;
+  }
+
+  .filtros {
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detalle del Pedido</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1 id="nombre-cliente-detalle"></h1>
+      <div class="cliente-info">
+        <p><strong>Teléfono:</strong> <span id="telefono-cliente"></span></p>
+        <p><strong>Dirección:</strong> <span id="direccion-cliente"></span></p>
+        <p><strong>Fecha:</strong> <span id="fecha-combo"></span></p>
+      </div>
+
+      <h2>Productos incluidos</h2>
+
+      <table id="tabla-productos">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Costo Unitario</th>
+            <th>Precio Venta</th>
+            <th>Ganancia</th>
+            <th>Subtotal</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <div class="totales">
+        <h3>Resumen del Pedido</h3>
+        <p>
+          <strong>Costo Total:</strong> $<span id="costo-total-detalle"
+            >0.00</span
+          >
+        </p>
+        <p>
+          <strong>Precio de Venta Total:</strong> $<span
+            id="precio-total-detalle"
+            >0.00</span
+          >
+        </p>
+        <p>
+          <strong>Ganancia Total:</strong> $<span id="ganancia-total-detalle"
+            >0.00</span
+          >
+        </p>
+      </div>
+    </div>
+    <script src="js/database.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/productos.js"></script>
+  </body>
+</html>
