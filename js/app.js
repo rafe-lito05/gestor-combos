@@ -1,12 +1,13 @@
 // Configuración inicial
 document.addEventListener("DOMContentLoaded", function () {
-  // Navegación - Botón Nuevo Pedido
-  const nuevoComboBtn = document.getElementById("nuevo-combo");
-  if (nuevoComboBtn) {
-    nuevoComboBtn.addEventListener("click", function (e) {
-      e.preventDefault();
-      window.location.href = "nuevo-combo.html";
-    });
+  // Navegación
+  if (document.getElementById("nuevo-combo")) {
+    document
+      .getElementById("nuevo-combo")
+      .addEventListener("click", function (e) {
+        e.preventDefault();
+        window.location.href = "nuevo-combo.html";
+      });
   }
 
   // Cargar combos en index
@@ -15,12 +16,13 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Buscar combos
-  const btnBuscar = document.getElementById("btn-buscar");
-  if (btnBuscar) {
-    btnBuscar.addEventListener("click", function () {
-      const query = document.getElementById("buscar-cliente").value;
-      cargarCombos(query);
-    });
+  if (document.getElementById("btn-buscar")) {
+    document
+      .getElementById("btn-buscar")
+      .addEventListener("click", function () {
+        const query = document.getElementById("buscar-cliente").value;
+        cargarCombos(query);
+      });
   }
 });
 
@@ -29,21 +31,18 @@ function cargarCombos(query) {
   const lista = document.getElementById("lista-combos");
   lista.innerHTML = "<p>Cargando combos...</p>";
 
-  // Simulamos una pequeña demora para la carga
   setTimeout(function () {
     const combos = obtenerCombos(query);
     renderizarCombos(combos, lista);
   }, 300);
 }
 
-// Función para obtener combos (con localStorage como respaldo)
+// Función para obtener combos
 function obtenerCombos(query) {
   try {
-    // Intenta usar localStorage primero
     const combosGuardados = localStorage.getItem("combos");
     let combos = combosGuardados ? JSON.parse(combosGuardados) : [];
 
-    // Si hay query, filtramos
     if (query) {
       combos = combos.filter(function (combo) {
         return combo.cliente.toLowerCase().includes(query.toLowerCase());
@@ -71,7 +70,9 @@ function renderizarCombos(combos, contenedor) {
     comboElement.className = "combo-card";
     comboElement.innerHTML = `
       <h3>${combo.cliente}</h3>
-      <p><strong>Teléfono:</strong> ${combo.telefono}</p>
+      <p><strong>Teléfono:</strong> ${formatearTelefonoCubano(
+        combo.telefono
+      )}</p>
       <p><strong>Fecha:</strong> ${combo.fecha}</p>
       <p><strong>Estado:</strong> <span class="estado-badge estado-${
         combo.estado || "pendiente"
@@ -81,18 +82,40 @@ function renderizarCombos(combos, contenedor) {
     }</span></p>
       <p><strong>Precio Venta:</strong> $${combo.precioTotal.toFixed(2)}</p>
       <p><strong>Ganancia:</strong> $${combo.gananciaTotal.toFixed(2)}</p>
-      <button data-id="${combo.id}" class="btn ver-detalle">Ver Detalle</button>
+      <div class="acciones-combo">
+        <button data-id="${
+          combo.id
+        }" class="btn ver-detalle">Ver Detalle</button>
+        <button data-id="${
+          combo.id
+        }" class="btn btn-primary editar-combo">Editar</button>
+      </div>
     `;
     contenedor.appendChild(comboElement);
   });
 
-  // Agregar eventos a los botones de ver detalle
+  // Agregar eventos
   document.querySelectorAll(".ver-detalle").forEach(function (boton) {
     boton.addEventListener("click", function () {
-      const id = this.getAttribute("data-id");
-      verDetalle(id);
+      verDetalle(this.getAttribute("data-id"));
     });
   });
+
+  document.querySelectorAll(".editar-combo").forEach(function (boton) {
+    boton.addEventListener("click", function () {
+      editarCombo(this.getAttribute("data-id"));
+    });
+  });
+}
+
+// Formatear teléfono cubano
+function formatearTelefonoCubano(telefono) {
+  if (!telefono) return "";
+  const numero = telefono.toString().replace(/\D/g, "").slice(0, 8);
+  if (numero.length === 8) {
+    return `${numero.substring(0, 4)} ${numero.substring(4)}`;
+  }
+  return telefono;
 }
 
 // Función para ver detalle
@@ -101,5 +124,13 @@ function verDetalle(id) {
   window.location.href = "detalle-combo.html";
 }
 
-// Hacer la función accesible globalmente
+// Función para editar combo
+function editarCombo(id) {
+  localStorage.setItem("comboActual", id);
+  window.location.href = "editar-combo.html";
+}
+
+// Hacer funciones accesibles globalmente
 window.verDetalle = verDetalle;
+window.editarCombo = editarCombo;
+window.formatearTelefonoCubano = formatearTelefonoCubano;

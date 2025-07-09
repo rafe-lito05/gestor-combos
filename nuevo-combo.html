@@ -7,7 +7,13 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
-    <div class="container">
+    <header class="main-header">
+      <div class="logo-container">
+        <img src="Assets/logo 3.webp" alt="ComboCuba Express" class="logo" />
+      </div>
+    </header>
+
+    <div class="container main-content">
       <h1>Nuevo Pedido de Combo</h1>
       <form id="form-combo">
         <div class="form-group">
@@ -21,8 +27,15 @@
         </div>
 
         <div class="form-group">
-          <label for="telefono">Teléfono*</label>
-          <input type="tel" id="telefono" required pattern="[0-9]{10,15}" />
+          <label for="telefono">Teléfono* (Formato: 5xxxxxxx o 7xxxxxxx)</label>
+          <input
+            type="tel"
+            id="telefono"
+            pattern="[57][0-9]{7}"
+            required
+            placeholder="Ej: 51234567"
+            title="Número cubano (5/7 seguido de 7 dígitos)"
+          />
         </div>
 
         <h3>Productos del Combo</h3>
