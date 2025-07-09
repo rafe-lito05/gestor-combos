@@ -42,7 +42,7 @@ function agregarProducto() {
   productoDiv.innerHTML = `
     <div class="producto-header">
       <h4>Producto</h4>
-      <button class="producto-eliminar btn-danger">Eliminar</button>
+      <button class="producto-eliminar btn-danger" aria-label="Eliminar producto">Eliminar</button>
     </div>
     <div class="producto-content">
       <div class="producto-item">
@@ -55,11 +55,11 @@ function agregarProducto() {
       </div>
       <div class="producto-item">
         <label>Costo Unitario ($)*</label>
-        <input type="number" class="producto-costo" step="0.01" min="0" required>
+        <input type="number" class="producto-costo" step="0.01" min="0.01" required>
       </div>
       <div class="producto-item">
         <label>Precio de Venta ($)*</label>
-        <input type="number" class="producto-precio" step="0.01" min="0" required>
+        <input type="number" class="producto-precio" step="0.01" min="0.01" required>
       </div>
       <div class="producto-item">
         <label>Ganancia</label>
@@ -74,21 +74,25 @@ function agregarProducto() {
 
   container.appendChild(productoDiv);
 
-  // Eventos
-  productoDiv
-    .querySelector(".producto-eliminar")
-    .addEventListener("click", function () {
+  // Eventos usando delegación
+  productoDiv.addEventListener("click", function (e) {
+    if (e.target.classList.contains("producto-eliminar")) {
       productoDiv.remove();
       calcularTotales();
-    });
+    }
+  });
 
   const inputs = productoDiv.querySelectorAll(
     ".producto-cantidad, .producto-costo, .producto-precio"
   );
   inputs.forEach((input) => {
     input.addEventListener("input", function () {
-      calcularProducto(productoDiv);
-      calcularTotales();
+      if (validarNumeroPositivo(this.value)) {
+        calcularProducto(productoDiv);
+        calcularTotales();
+      } else {
+        this.value = "";
+      }
     });
   });
 }
@@ -102,7 +106,7 @@ function agregarProductoEditar(producto = null) {
   productoDiv.innerHTML = `
     <div class="producto-header">
       <h4>Producto</h4>
-      <button class="producto-eliminar btn-danger">Eliminar</button>
+      <button class="producto-eliminar btn-danger" aria-label="Eliminar producto">Eliminar</button>
     </div>
     <div class="producto-content">
       <div class="producto-item">
@@ -119,26 +123,26 @@ function agregarProductoEditar(producto = null) {
       </div>
       <div class="producto-item">
         <label>Costo Unitario ($)*</label>
-        <input type="number" class="producto-costo" step="0.01" min="0" value="${
-          producto?.costo || 0
+        <input type="number" class="producto-costo" step="0.01" min="0.01" value="${
+          producto?.costo || 0.01
         }" required>
       </div>
       <div class="producto-item">
         <label>Precio de Venta ($)*</label>
-        <input type="number" class="producto-precio" step="0.01" min="0" value="${
-          producto?.precio || 0
+        <input type="number" class="producto-precio" step="0.01" min="0.01" value="${
+          producto?.precio || 0.01
         }" required>
       </div>
       <div class="producto-item">
         <label>Ganancia</label>
         <div class="producto-ganancia">${
-          producto ? (producto.precio - produto.costo).toFixed(2) : "0.00"
+          producto ? (producto.precio - producto.costo).toFixed(2) : "0.00"
         }</div>
       </div>
       <div class="producto-item">
         <label>Subtotal</label>
         <div class="producto-subtotal">${
-          producto ? (producto.cantidad * produto.precio).toFixed(2) : "0.00"
+          producto ? (producto.cantidad * producto.precio).toFixed(2) : "0.00"
         }</div>
       </div>
     </div>
@@ -146,21 +150,25 @@ function agregarProductoEditar(producto = null) {
 
   container.appendChild(productoDiv);
 
-  // Eventos
-  productoDiv
-    .querySelector(".producto-eliminar")
-    .addEventListener("click", function () {
+  // Eventos usando delegación
+  productoDiv.addEventListener("click", function (e) {
+    if (e.target.classList.contains("producto-eliminar")) {
       productoDiv.remove();
       actualizarTotalesEdicion();
-    });
+    }
+  });
 
   const inputs = productoDiv.querySelectorAll(
     ".producto-cantidad, .producto-costo, .producto-precio"
   );
   inputs.forEach((input) => {
     input.addEventListener("input", function () {
-      calcularProducto(productoDiv);
-      actualizarTotalesEdicion();
+      if (validarNumeroPositivo(this.value)) {
+        calcularProducto(productoDiv);
+        actualizarTotalesEdicion();
+      } else {
+        this.value = "";
+      }
     });
   });
 
@@ -191,7 +199,8 @@ function cargarComboParaEditar() {
 
     actualizarTotalesEdicion();
   } else {
-    window.location.href = "index.html";
+    mostrarNotificacion("No se encontró el combo a editar", "error");
+    setTimeout(() => (window.location.href = "index.html"), 1500);
   }
 }
 
@@ -208,9 +217,9 @@ function calcularProducto(productoDiv) {
   const subtotal = cantidad * precio;
 
   productoDiv.querySelector(".producto-ganancia").textContent =
-    ganancia.toFixed(2);
+    formatearMoneda(ganancia);
   productoDiv.querySelector(".producto-subtotal").textContent =
-    subtotal.toFixed(2);
+    formatearMoneda(subtotal);
 }
 
 // Función para calcular totales (nuevo combo)
@@ -234,10 +243,12 @@ function calcularTotales() {
     gananciaTotal += cantidad * (precio - costo);
   });
 
-  document.getElementById("costo-total").textContent = costoTotal.toFixed(2);
-  document.getElementById("precio-total").textContent = precioTotal.toFixed(2);
+  document.getElementById("costo-total").textContent =
+    formatearMoneda(costoTotal);
+  document.getElementById("precio-total").textContent =
+    formatearMoneda(precioTotal);
   document.getElementById("ganancia-total").textContent =
-    gananciaTotal.toFixed(2);
+    formatearMoneda(gananciaTotal);
 
   return { costoTotal, precioTotal, gananciaTotal };
 }
@@ -264,11 +275,11 @@ function actualizarTotalesEdicion() {
   });
 
   document.getElementById("editar-costo-total").textContent =
-    costoTotal.toFixed(2);
+    formatearMoneda(costoTotal);
   document.getElementById("editar-precio-total").textContent =
-    precioTotal.toFixed(2);
+    formatearMoneda(precioTotal);
   document.getElementById("editar-ganancia-total").textContent =
-    gananciaTotal.toFixed(2);
+    formatearMoneda(gananciaTotal);
 
   return { costoTotal, precioTotal, gananciaTotal };
 }
@@ -279,39 +290,48 @@ function guardarCombo(esEdicion) {
     ? parseInt(localStorage.getItem("comboActual"))
     : Date.now();
   const cliente = esEdicion
-    ? document.getElementById("editar-nombre-cliente").value
-    : document.getElementById("nombre-cliente").value;
+    ? document.getElementById("editar-nombre-cliente").value.trim()
+    : document.getElementById("nombre-cliente").value.trim();
 
   const direccion = esEdicion
-    ? document.getElementById("editar-direccion").value
-    : document.getElementById("direccion").value;
+    ? document.getElementById("editar-direccion").value.trim()
+    : document.getElementById("direccion").value.trim();
 
   const telefono = esEdicion
-    ? document.getElementById("editar-telefono").value
-    : document.getElementById("telefono").value;
+    ? document.getElementById("editar-telefono").value.trim()
+    : document.getElementById("telefono").value.trim();
 
   const estado = esEdicion
     ? document.getElementById("editar-estado").value
     : "pendiente";
 
+  // Validar campos obligatorios
+  if (!cliente || !telefono) {
+    mostrarNotificacion("Nombre y teléfono son campos obligatorios", "error");
+    return;
+  }
+
   // Validar teléfono cubano
   if (!/^[57]\d{7}$/.test(telefono)) {
-    alert("El teléfono debe comenzar con 5 o 7 y tener 8 dígitos");
+    mostrarNotificacion(
+      "El teléfono debe comenzar con 5 o 7 y tener 8 dígitos",
+      "error"
+    );
     return;
   }
 
   const productos = [];
   const selector = esEdicion
     ? "#editar-productos-container .producto-container"
-    : ".producto-container";
+    : "#productos-container .producto-container";
 
   document.querySelectorAll(selector).forEach((prod) => {
-    const nombre = prod.querySelector(".producto-nombre").value;
+    const nombre = prod.querySelector(".producto-nombre").value.trim();
     const cantidad = parseFloat(prod.querySelector(".producto-cantidad").value);
     const costo = parseFloat(prod.querySelector(".producto-costo").value);
     const precio = parseFloat(prod.querySelector(".producto-precio").value);
 
-    if (nombre && cantidad && costo && precio) {
+    if (nombre && cantidad > 0 && costo > 0 && precio > 0) {
       productos.push({
         nombre,
         cantidad,
@@ -324,13 +344,16 @@ function guardarCombo(esEdicion) {
   });
 
   if (productos.length === 0) {
-    alert("Debe agregar al menos un producto válido");
+    mostrarNotificacion("Debe agregar al menos un producto válido", "error");
     return;
   }
 
   const { precioTotal, gananciaTotal, costoTotal } = esEdicion
     ? actualizarTotalesEdicion()
     : calcularTotales();
+
+  const combos = JSON.parse(localStorage.getItem("combos")) || [];
+  const comboOriginal = esEdicion ? combos.find((c) => c.id === id) : null;
 
   const comboActualizado = {
     id,
@@ -342,14 +365,14 @@ function guardarCombo(esEdicion) {
     gananciaTotal,
     costoTotal,
     estado,
-    fecha: new Date().toLocaleDateString("es-ES", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    }),
+    fecha:
+      comboOriginal?.fecha ||
+      new Date().toLocaleDateString("es-ES", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      }),
   };
-
-  const combos = JSON.parse(localStorage.getItem("combos")) || [];
 
   if (esEdicion) {
     const index = combos.findIndex((c) => c.id === id);
@@ -361,5 +384,26 @@ function guardarCombo(esEdicion) {
   }
 
   localStorage.setItem("combos", JSON.stringify(combos));
-  window.location.href = "index.html";
+  mostrarNotificacion(
+    `Combo ${esEdicion ? "actualizado" : "guardado"} correctamente`,
+    "success"
+  );
+  setTimeout(() => (window.location.href = "index.html"), 1500);
+}
+
+// Funciones utilitarias
+function validarNumeroPositivo(value) {
+  return !isNaN(value) && parseFloat(value) > 0;
+}
+
+function formatearMoneda(valor) {
+  return `$${parseFloat(valor).toFixed(2)}`;
+}
+
+function mostrarNotificacion(mensaje, tipo = "success") {
+  const notificacion = document.createElement("div");
+  notificacion.className = `notificacion notificacion-${tipo}`;
+  notificacion.textContent = mensaje;
+  document.body.appendChild(notificacion);
+  setTimeout(() => notificacion.remove(), 3000);
 }

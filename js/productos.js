@@ -10,7 +10,8 @@ function cargarDetalleCombo() {
   const combosGuardados = localStorage.getItem("combos");
 
   if (!combosGuardados) {
-    window.location.href = "index.html";
+    mostrarNotificacion("No hay pedidos registrados", "error");
+    setTimeout(() => window.location.href = "index.html", 1500);
     return;
   }
 
@@ -18,7 +19,8 @@ function cargarDetalleCombo() {
   const combo = combos.find((c) => c.id === comboId);
 
   if (!combo) {
-    window.location.href = "index.html";
+    mostrarNotificacion("Pedido no encontrado", "error");
+    setTimeout(() => window.location.href = "index.html", 1500);
     return;
   }
 
@@ -59,21 +61,21 @@ function cargarDetalleCombo() {
     row.innerHTML = `
       <td>${prod.nombre}</td>
       <td>${prod.cantidad}</td>
-      <td>$${prod.costo.toFixed(2)}</td>
-      <td>$${prod.precio.toFixed(2)}</td>
-      <td>$${ganancia.toFixed(2)}</td>
-      <td>$${subtotal.toFixed(2)}</td>
+      <td>${formatearMoneda(prod.costo)}</td>
+      <td>${formatearMoneda(prod.precio)}</td>
+      <td>${formatearMoneda(ganancia)}</td>
+      <td>${formatearMoneda(subtotal)}</td>
     `;
     tbody.appendChild(row);
   });
 
   // Mostrar totales
   document.getElementById("costo-total-detalle").textContent =
-    costoTotal.toFixed(2);
+    formatearMoneda(costoTotal);
   document.getElementById("precio-total-detalle").textContent =
-    precioTotal.toFixed(2);
+    formatearMoneda(precioTotal);
   document.getElementById("ganancia-total-detalle").textContent =
-    gananciaTotal.toFixed(2);
+    formatearMoneda(gananciaTotal);
 }
 
 function configurarEventosDetalle() {
@@ -119,7 +121,8 @@ function eliminarCombo() {
   const nuevosCombos = combos.filter((c) => c.id !== comboId);
 
   localStorage.setItem("combos", JSON.stringify(nuevosCombos));
-  window.location.href = "index.html";
+  mostrarNotificacion("Pedido eliminado correctamente", "success");
+  setTimeout(() => window.location.href = "index.html", 1500);
 }
 
 function actualizarEstadoCombo(nuevoEstado) {
@@ -130,6 +133,7 @@ function actualizarEstadoCombo(nuevoEstado) {
   if (comboIndex !== -1) {
     combos[comboIndex].estado = nuevoEstado;
     localStorage.setItem("combos", JSON.stringify(combos));
+    mostrarNotificacion("Estado actualizado correctamente", "success");
 
     // Actualizar el badge visualmente
     actualizarBadgeEstado(nuevoEstado);
@@ -144,20 +148,37 @@ function actualizarBadgeEstado(estado) {
   }
 }
 
-// Función para formatear teléfono cubano
-function formatearTelefonoCubano(telefono) {
-  if (!telefono) return "";
-  const numero = telefono.toString().replace(/\D/g, "").slice(0, 8);
-  if (numero.length === 8) {
-    return `${numero.substring(0, 4)} ${numero.substring(4)}`;
-  }
-  return telefono;
-}
-
 // Hacer funciones accesibles globalmente si no están definidas
 if (typeof window.editarCombo === "undefined") {
   window.editarCombo = function (id) {
     localStorage.setItem("comboActual", id);
     window.location.href = "editar-combo.html";
+  };
+}
+
+if (typeof window.formatearTelefonoCubano === "undefined") {
+  window.formatearTelefonoCubano = function (telefono) {
+    if (!telefono) return "";
+    const numero = telefono.toString().replace(/\D/g, "").slice(0, 8);
+    if (numero.length === 8) {
+      return `${numero.substring(0, 4)} ${numero.substring(4)}`;
+    }
+    return telefono;
+  };
+}
+
+if (typeof window.formatearMoneda === "undefined") {
+  window.formatearMoneda = function (valor) {
+    return `$${parseFloat(valor).toFixed(2)}`;
+  };
+}
+
+if (typeof window.mostrarNotificacion === "undefined") {
+  window.mostrarNotificacion = function (mensaje, tipo = "success") {
+    const notificacion = document.createElement("div");
+    notificacion.className = `notificacion notificacion-${tipo}`;
+    notificacion.textContent = mensaje;
+    document.body.appendChild(notificacion);
+    setTimeout(() => notificacion.remove(), 3000);
   };
 }

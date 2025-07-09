@@ -15,26 +15,25 @@ document.addEventListener("DOMContentLoaded", function () {
     cargarCombos();
   }
 
-  // Buscar combos
-  if (document.getElementById("btn-buscar")) {
-    document
-      .getElementById("btn-buscar")
-      .addEventListener("click", function () {
-        const query = document.getElementById("buscar-cliente").value;
-        cargarCombos(query);
-      });
+  // Buscar combos con debounce
+  if (document.getElementById("buscar-cliente")) {
+    let timeoutBusqueda;
+    document.getElementById("buscar-cliente").addEventListener("input", function() {
+      clearTimeout(timeoutBusqueda);
+      timeoutBusqueda = setTimeout(() => {
+        cargarCombos(this.value);
+      }, 300);
+    });
   }
 });
 
 // Función para cargar combos
 function cargarCombos(query) {
   const lista = document.getElementById("lista-combos");
-  lista.innerHTML = "<p>Cargando combos...</p>";
+  lista.innerHTML = '<div class="loading">Cargando combos...</div>';
 
-  setTimeout(function () {
-    const combos = obtenerCombos(query);
-    renderizarCombos(combos, lista);
-  }, 300);
+  const combos = obtenerCombos(query);
+  renderizarCombos(combos, lista);
 }
 
 // Función para obtener combos
@@ -44,14 +43,23 @@ function obtenerCombos(query) {
     let combos = combosGuardados ? JSON.parse(combosGuardados) : [];
 
     if (query) {
+      const queryLower = query.toLowerCase();
       combos = combos.filter(function (combo) {
-        return combo.cliente.toLowerCase().includes(query.toLowerCase());
+        return (
+          combo.cliente.toLowerCase().includes(queryLower) ||
+          (combo.telefono && combo.telefono.includes(query)) ||
+          (combo.direccion && combo.direccion.toLowerCase().includes(queryLower))
+        );
       });
     }
+
+    // Ordenar por fecha más reciente primero
+    combos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
     return combos;
   } catch (error) {
     console.error("Error al obtener combos:", error);
+    mostrarNotificacion("Error al cargar los combos", "error");
     return [];
   }
 }
@@ -61,7 +69,13 @@ function renderizarCombos(combos, contenedor) {
   contenedor.innerHTML = "";
 
   if (combos.length === 0) {
-    contenedor.innerHTML = "<p>No hay pedidos registrados</p>";
+    contenedor.innerHTML = `
+      <div class="empty-state">
+        <img src="Assets/empty-state.svg" alt="Sin pedidos" class="empty-img">
+        <p>No hay pedidos registrados</p>
+        <a href="nuevo-combo.html" class="btn">Crear primer pedido</a>
+      </div>
+    `;
     return;
   }
 
@@ -80,37 +94,33 @@ function renderizarCombos(combos, contenedor) {
       (combo.estado || "pendiente").charAt(0).toUpperCase() +
       (combo.estado || "pendiente").slice(1)
     }</span></p>
-      <p><strong>Precio Venta:</strong> $${combo.precioTotal.toFixed(2)}</p>
-      <p><strong>Ganancia:</strong> $${combo.gananciaTotal.toFixed(2)}</p>
+      <p><strong>Precio Venta:</strong> ${formatearMoneda(combo.precioTotal)}</p>
+      <p><strong>Ganancia:</strong> ${formatearMoneda(combo.gananciaTotal)}</p>
       <div class="acciones-combo">
         <button data-id="${
           combo.id
-        }" class="btn ver-detalle">Ver Detalle</button>
+        }" class="btn ver-detalle" aria-label="Ver detalle del pedido">Ver Detalle</button>
         <button data-id="${
           combo.id
-        }" class="btn btn-primary editar-combo">Editar</button>
+        }" class="btn btn-primary editar-combo" aria-label="Editar pedido">Editar</button>
       </div>
     `;
     contenedor.appendChild(comboElement);
   });
 
-  // Agregar eventos
-  document.querySelectorAll(".ver-detalle").forEach(function (boton) {
-    boton.addEventListener("click", function () {
-      verDetalle(this.getAttribute("data-id"));
-    });
-  });
-
-  document.querySelectorAll(".editar-combo").forEach(function (boton) {
-    boton.addEventListener("click", function () {
-      editarCombo(this.getAttribute("data-id"));
-    });
+  // Usar delegación de eventos para los botones dinámicos
+  contenedor.addEventListener("click", function(e) {
+    if (e.target.classList.contains("ver-detalle")) {
+      verDetalle(e.target.getAttribute("data-id"));
+    } else if (e.target.classList.contains("editar-combo")) {
+      editarCombo(e.target.getAttribute("data-id"));
+    }
   });
 }
 
 // Formatear teléfono cubano
 function formatearTelefonoCubano(telefono) {
-  if (!telefono) return "";
+  if (!telefono) return "No especificado";
   const numero = telefono.toString().replace(/\D/g, "").slice(0, 8);
   if (numero.length === 8) {
     return `${numero.substring(0, 4)} ${numero.substring(4)}`;
@@ -130,7 +140,21 @@ function editarCombo(id) {
   window.location.href = "editar-combo.html";
 }
 
+// Funciones utilitarias
+function formatearMoneda(valor) {
+  return `$${parseFloat(valor).toFixed(2)}`;
+}
+
+function mostrarNotificacion(mensaje, tipo = "success") {
+  const notificacion = document.createElement("div");
+  notificacion.className = `notificacion notificacion-${tipo}`;
+  notificacion.textContent = mensaje;
+  document.body.appendChild(notificacion);
+  setTimeout(() => notificacion.remove(), 3000);
+}
+
 // Hacer funciones accesibles globalmente
 window.verDetalle = verDetalle;
 window.editarCombo = editarCombo;
 window.formatearTelefonoCubano = formatearTelefonoCubano;
+window.formatearMoneda = formatearMoneda;
