@@ -1,67 +1,89 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Detalle del Pedido</title>
-  <link rel="stylesheet" href="css/style.css" />
-</head>
-<body>
-  <header class="main-header">
-    <div class="logo-container">
-      <img src="Assets/logo 3.webp" alt="ComboCuba Express" class="logo">
-    </div>
-  </header>
-  
-  <div class="container main-content">
-    <div class="header-detalle">
-      <h1 id="nombre-cliente-detalle"></h1>
-      <div class="acciones-combo">
-        <button id="eliminar-combo" class="btn btn-danger">Eliminar Pedido</button>
-        <button id="editar-combo" class="btn btn-primary">Editar Pedido</button>
-        <select id="estado-combo" class="estado-select">
-          <option value="pendiente">Pendiente</option>
-          <option value="completado">Completado</option>
-        </select>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detalle del Pedido</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header class="main-header">
+      <div class="logo-container">
+        <img src="Assets/logo 3.webp" alt="ComboCuba Express" class="logo" />
+      </div>
+    </header>
+
+    <div class="container main-content">
+      <div class="header-detalle">
+        <h1 id="nombre-cliente-detalle"></h1>
+        <div class="acciones-combo">
+          <button id="eliminar-combo" class="btn btn-danger">
+            Eliminar Pedido
+          </button>
+          <button id="editar-combo" class="btn btn-primary">
+            Editar Pedido
+          </button>
+          <select id="estado-combo" class="estado-select">
+            <option value="pendiente">Pendiente</option>
+            <option value="completado">Completado</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="cliente-info">
+        <p>
+          <strong>Estado:</strong>
+          <span id="estado-actual" class="estado-badge estado-pendiente"
+            >Pendiente</span
+          >
+        </p>
+        <p><strong>Teléfono:</strong> <span id="telefono-cliente"></span></p>
+        <p><strong>Dirección:</strong> <span id="direccion-cliente"></span></p>
+        <p><strong>Fecha:</strong> <span id="fecha-combo"></span></p>
+      </div>
+
+      <h2>Productos incluidos</h2>
+
+      <div class="table-container">
+        <table id="tabla-productos">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Costo Unitario</th>
+              <th>Precio Venta</th>
+              <th>Ganancia</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="totales">
+        <h3>Resumen del Pedido</h3>
+        <p>
+          <strong>Costo Total:</strong> $<span id="costo-total-detalle"
+            >0.00</span
+          >
+        </p>
+        <p>
+          <strong>Precio de Venta Total:</strong> $<span
+            id="precio-total-detalle"
+            >0.00</span
+          >
+        </p>
+        <p>
+          <strong>Ganancia Total:</strong> $<span id="ganancia-total-detalle"
+            >0.00</span
+          >
+        </p>
+      </div>
+
+      <div class="botones-footer">
+        <a href="index.html" class="btn btn-secondary btn-volver">Volver a la lista</a>
       </div>
     </div>
-
-    <div class="cliente-info">
-      <p><strong>Estado:</strong> <span id="estado-actual" class="estado-badge estado-pendiente">Pendiente</span></p>
-      <p><strong>Teléfono:</strong> <span id="telefono-cliente"></span></p>
-      <p><strong>Dirección:</strong> <span id="direccion-cliente"></span></p>
-      <p><strong>Fecha:</strong> <span id="fecha-combo"></span></p>
-    </div>
-
-    <h2>Productos incluidos</h2>
-
-    <div class="table-container">
-      <table id="tabla-productos">
-        <thead>
-          <tr>
-            <th>Producto</th>
-            <th>Cantidad</th>
-            <th>Costo Unitario</th>
-            <th>Precio Venta</th>
-            <th>Ganancia</th>
-            <th>Subtotal</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-
-    <div class="totales">
-      <h3>Resumen del Pedido</h3>
-      <p><strong>Costo Total:</strong> $<span id="costo-total-detalle">0.00</span></p>
-      <p><strong>Precio de Venta Total:</strong> $<span id="precio-total-detalle">0.00</span></p>
-      <p><strong>Ganancia Total:</strong> $<span id="ganancia-total-detalle">0.00</span></p>
-    </div>
-
-    <div class="botones-footer">
-      <a href="index.html" class="btn">Volver a la lista</a>
-    </div>
-  </div>
-  <script src="js/productos.js"></script>
-</body>
+    <script src="js/productos.js"></script>
+  </body>
 </html>

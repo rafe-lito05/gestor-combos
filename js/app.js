@@ -18,12 +18,14 @@ document.addEventListener("DOMContentLoaded", function () {
   // Buscar combos con debounce
   if (document.getElementById("buscar-cliente")) {
     let timeoutBusqueda;
-    document.getElementById("buscar-cliente").addEventListener("input", function() {
-      clearTimeout(timeoutBusqueda);
-      timeoutBusqueda = setTimeout(() => {
-        cargarCombos(this.value);
-      }, 300);
-    });
+    document
+      .getElementById("buscar-cliente")
+      .addEventListener("input", function () {
+        clearTimeout(timeoutBusqueda);
+        timeoutBusqueda = setTimeout(() => {
+          cargarCombos(this.value);
+        }, 300);
+      });
   }
 });
 
@@ -48,7 +50,8 @@ function obtenerCombos(query) {
         return (
           combo.cliente.toLowerCase().includes(queryLower) ||
           (combo.telefono && combo.telefono.includes(query)) ||
-          (combo.direccion && combo.direccion.toLowerCase().includes(queryLower))
+          (combo.direccion &&
+            combo.direccion.toLowerCase().includes(queryLower))
         );
       });
     }
@@ -71,9 +74,8 @@ function renderizarCombos(combos, contenedor) {
   if (combos.length === 0) {
     contenedor.innerHTML = `
       <div class="empty-state">
-        <img src="Assets/empty-state.svg" alt="Sin pedidos" class="empty-img">
+        <img src="Assets/empty.png" alt="Sin pedidos" class="empty-img">
         <p>No hay pedidos registrados</p>
-        <a href="nuevo-combo.html" class="btn">Crear primer pedido</a>
       </div>
     `;
     return;
@@ -94,7 +96,9 @@ function renderizarCombos(combos, contenedor) {
       (combo.estado || "pendiente").charAt(0).toUpperCase() +
       (combo.estado || "pendiente").slice(1)
     }</span></p>
-      <p><strong>Precio Venta:</strong> ${formatearMoneda(combo.precioTotal)}</p>
+      <p><strong>Precio Venta:</strong> ${formatearMoneda(
+        combo.precioTotal
+      )}</p>
       <p><strong>Ganancia:</strong> ${formatearMoneda(combo.gananciaTotal)}</p>
       <div class="acciones-combo">
         <button data-id="${
@@ -109,7 +113,7 @@ function renderizarCombos(combos, contenedor) {
   });
 
   // Usar delegación de eventos para los botones dinámicos
-  contenedor.addEventListener("click", function(e) {
+  contenedor.addEventListener("click", function (e) {
     if (e.target.classList.contains("ver-detalle")) {
       verDetalle(e.target.getAttribute("data-id"));
     } else if (e.target.classList.contains("editar-combo")) {
