@@ -41,6 +41,20 @@
         </div>
 
         <div class="form-group">
+          <label for="editar-tasa-dolar"
+            >Precio del dólar informal (CUP)*</label
+          >
+          <input
+            type="number"
+            id="editar-tasa-dolar"
+            step="0.01"
+            min="1"
+            required
+            placeholder="Ej: 120.50"
+          />
+        </div>
+
+        <div class="form-group">
           <label for="editar-estado">Estado*</label>
           <select id="editar-estado" class="estado-select" required>
             <option value="pendiente">Pendiente</option>
@@ -61,17 +75,20 @@
             <strong>Costo Total:</strong> $<span id="editar-costo-total"
               >0.00</span
             >
+            CUP
           </p>
           <p>
             <strong>Precio de Venta Total:</strong> $<span
               id="editar-precio-total"
               >0.00</span
             >
+            USD (<span id="editar-precio-total-cup">0.00</span> CUP)
           </p>
           <p>
             <strong>Ganancia Total:</strong> $<span id="editar-ganancia-total"
               >0.00</span
             >
+            CUP
           </p>
         </div>
 

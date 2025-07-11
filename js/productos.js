@@ -11,7 +11,7 @@ function cargarDetalleCombo() {
 
   if (!combosGuardados) {
     mostrarNotificacion("No hay pedidos registrados", "error");
-    setTimeout(() => window.location.href = "index.html", 1500);
+    setTimeout(() => (window.location.href = "index.html"), 1500);
     return;
   }
 
@@ -20,7 +20,7 @@ function cargarDetalleCombo() {
 
   if (!combo) {
     mostrarNotificacion("Pedido no encontrado", "error");
-    setTimeout(() => window.location.href = "index.html", 1500);
+    setTimeout(() => (window.location.href = "index.html"), 1500);
     return;
   }
 
@@ -44,38 +44,43 @@ function cargarDetalleCombo() {
   const tbody = document.querySelector("#tabla-productos tbody");
   tbody.innerHTML = "";
 
-  let costoTotal = 0;
-  let precioTotal = 0;
-  let gananciaTotal = 0;
-
   combo.productos.forEach((prod) => {
-    const subtotal = prod.cantidad * prod.precio;
-    const costo = prod.cantidad * prod.costo;
-    const ganancia = subtotal - costo;
-
-    costoTotal += costo;
-    precioTotal += subtotal;
-    gananciaTotal += ganancia;
+    const subtotalUSD = prod.cantidad * prod.precio;
+    const costoUSD = (prod.costo / combo.tasaDolar) * prod.cantidad;
+    const gananciaUSD = subtotalUSD - costoUSD;
+    const subtotalCUP = subtotalUSD * combo.tasaDolar;
+    const costoCUP = prod.costo * prod.cantidad;
+    const gananciaCUP = subtotalCUP - costoCUP;
 
     const row = document.createElement("tr");
     row.innerHTML = `
       <td>${prod.nombre}</td>
       <td>${prod.cantidad}</td>
-      <td>${formatearMoneda(prod.costo)}</td>
-      <td>${formatearMoneda(prod.precio)}</td>
-      <td>${formatearMoneda(ganancia)}</td>
-      <td>${formatearMoneda(subtotal)}</td>
+      <td>${formatearMoneda(prod.costo)} CUP (${formatearMoneda(
+      prod.costo / combo.tasaDolar
+    )} USD)</td>
+      <td>${formatearMoneda(prod.precio)} USD (${formatearMoneda(
+      prod.precio * combo.tasaDolar
+    )} CUP)</td>
+      <td>${formatearMoneda(gananciaCUP)} CUP (${formatearMoneda(
+      gananciaUSD
+    )} USD)</td>
+      <td>${formatearMoneda(subtotalUSD)} USD (${formatearMoneda(
+      subtotalCUP
+    )} CUP)</td>
     `;
     tbody.appendChild(row);
   });
 
   // Mostrar totales
-  document.getElementById("costo-total-detalle").textContent =
-    formatearMoneda(costoTotal);
-  document.getElementById("precio-total-detalle").textContent =
-    formatearMoneda(precioTotal);
+  document.getElementById("costo-total-detalle").textContent = formatearMoneda(
+    combo.costoTotalCUP
+  );
+  document.getElementById("precio-total-detalle").textContent = formatearMoneda(
+    combo.precioTotalUSD
+  ) + " USD (" + formatearMoneda(combo.precioTotalCUP) + " CUP)";
   document.getElementById("ganancia-total-detalle").textContent =
-    formatearMoneda(gananciaTotal);
+    formatearMoneda(combo.gananciaTotalCUP);
 }
 
 function configurarEventosDetalle() {
@@ -122,7 +127,7 @@ function eliminarCombo() {
 
   localStorage.setItem("combos", JSON.stringify(nuevosCombos));
   mostrarNotificacion("Pedido eliminado correctamente", "success");
-  setTimeout(() => window.location.href = "index.html", 1500);
+  setTimeout(() => (window.location.href = "index.html"), 1500);
 }
 
 function actualizarEstadoCombo(nuevoEstado) {
@@ -169,7 +174,7 @@ if (typeof window.formatearTelefonoCubano === "undefined") {
 
 if (typeof window.formatearMoneda === "undefined") {
   window.formatearMoneda = function (valor) {
-    return `$${parseFloat(valor).toFixed(2)}`;
+    return parseFloat(valor).toFixed(2);
   };
 }
 

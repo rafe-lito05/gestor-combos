@@ -97,9 +97,11 @@ function renderizarCombos(combos, contenedor) {
       (combo.estado || "pendiente").slice(1)
     }</span></p>
       <p><strong>Precio Venta:</strong> ${formatearMoneda(
-        combo.precioTotal
-      )}</p>
-      <p><strong>Ganancia:</strong> ${formatearMoneda(combo.gananciaTotal)}</p>
+        combo.precioTotalCUP
+      )} CUP (${formatearMoneda(combo.precioTotalUSD)} USD)</p>
+      <p><strong>Ganancia:</strong> ${formatearMoneda(
+        combo.gananciaTotalCUP
+      )} CUP</p>
       <div class="acciones-combo">
         <button data-id="${
           combo.id

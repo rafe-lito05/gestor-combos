@@ -38,6 +38,18 @@
           />
         </div>
 
+        <div class="form-group">
+          <label for="tasa-dolar">Precio del dólar informal (CUP)*</label>
+          <input
+            type="number"
+            id="tasa-dolar"
+            step="0.01"
+            min="1"
+            required
+            placeholder="Ej: 120.50"
+          />
+        </div>
+
         <h3>Productos del Combo</h3>
         <div id="productos-container"></div>
 
@@ -49,16 +61,19 @@
           <h3>Resumen del Pedido</h3>
           <p>
             <strong>Costo Total:</strong> $<span id="costo-total">0.00</span>
+            CUP
           </p>
           <p>
             <strong>Precio de Venta Total:</strong> $<span id="precio-total"
               >0.00</span
             >
+            USD (<span id="precio-total-cup">0.00</span> CUP)
           </p>
           <p>
             <strong>Ganancia Total:</strong> $<span id="ganancia-total"
               >0.00</span
             >
+            CUP
           </p>
         </div>
 

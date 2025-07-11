@@ -12,6 +12,11 @@ document.addEventListener("DOMContentLoaded", function () {
     document
       .getElementById("agregar-producto")
       .addEventListener("click", agregarProducto);
+
+    // Escuchar cambios en la tasa de dólar
+    document
+      .getElementById("tasa-dolar")
+      .addEventListener("input", calcularTotales);
   }
 
   // Editar combo
@@ -28,6 +33,11 @@ document.addEventListener("DOMContentLoaded", function () {
       .addEventListener("click", function () {
         agregarProductoEditar();
       });
+
+    // Escuchar cambios en la tasa de dólar
+    document
+      .getElementById("editar-tasa-dolar")
+      .addEventListener("input", actualizarTotalesEdicion);
 
     cargarComboParaEditar();
   }
@@ -54,19 +64,19 @@ function agregarProducto() {
         <input type="number" class="producto-cantidad" min="1" value="1" required>
       </div>
       <div class="producto-item">
-        <label>Costo Unitario ($)*</label>
+        <label>Costo Unitario (CUP)*</label>
         <input type="number" class="producto-costo" step="0.01" min="0.01" required>
       </div>
       <div class="producto-item">
-        <label>Precio de Venta ($)*</label>
+        <label>Precio de Venta (USD)*</label>
         <input type="number" class="producto-precio" step="0.01" min="0.01" required>
       </div>
       <div class="producto-item">
-        <label>Ganancia</label>
+        <label>Ganancia (CUP)</label>
         <div class="producto-ganancia">0.00</div>
       </div>
       <div class="producto-item">
-        <label>Subtotal</label>
+        <label>Subtotal (USD)</label>
         <div class="producto-subtotal">0.00</div>
       </div>
     </div>
@@ -122,25 +132,27 @@ function agregarProductoEditar(producto = null) {
         }" required>
       </div>
       <div class="producto-item">
-        <label>Costo Unitario ($)*</label>
+        <label>Costo Unitario (CUP)*</label>
         <input type="number" class="producto-costo" step="0.01" min="0.01" value="${
           producto?.costo || 0.01
         }" required>
       </div>
       <div class="producto-item">
-        <label>Precio de Venta ($)*</label>
+        <label>Precio de Venta (USD)*</label>
         <input type="number" class="producto-precio" step="0.01" min="0.01" value="${
           producto?.precio || 0.01
         }" required>
       </div>
       <div class="producto-item">
-        <label>Ganancia</label>
+        <label>Ganancia (CUP)</label>
         <div class="producto-ganancia">${
-          producto ? (producto.precio - producto.costo).toFixed(2) : "0.00"
+          producto
+            ? (producto.precio * producto.tasaDolar - producto.costo).toFixed(2)
+            : "0.00"
         }</div>
       </div>
       <div class="producto-item">
-        <label>Subtotal</label>
+        <label>Subtotal (USD)</label>
         <div class="producto-subtotal">${
           producto ? (producto.cantidad * producto.precio).toFixed(2) : "0.00"
         }</div>
@@ -187,6 +199,7 @@ function cargarComboParaEditar() {
     document.getElementById("editar-nombre-cliente").value = combo.cliente;
     document.getElementById("editar-direccion").value = combo.direccion || "";
     document.getElementById("editar-telefono").value = combo.telefono;
+    document.getElementById("editar-tasa-dolar").value = combo.tasaDolar || 1;
     document.getElementById("editar-estado").value =
       combo.estado || "pendiente";
 
@@ -212,14 +225,19 @@ function calcularProducto(productoDiv) {
     parseFloat(productoDiv.querySelector(".producto-costo").value) || 0;
   const precio =
     parseFloat(productoDiv.querySelector(".producto-precio").value) || 0;
+  const tasaDolar = parseFloat(
+    document.getElementById("tasa-dolar")?.value ||
+      document.getElementById("editar-tasa-dolar")?.value ||
+      1
+  );
 
-  const ganancia = precio - costo;
-  const subtotal = cantidad * precio;
+  const subtotalUSD = cantidad * precio;
+  const gananciaCUP = precio * tasaDolar * cantidad - costo * cantidad;
 
   productoDiv.querySelector(".producto-ganancia").textContent =
-    formatearMoneda(ganancia);
+    formatearMoneda(gananciaCUP);
   productoDiv.querySelector(".producto-subtotal").textContent =
-    formatearMoneda(subtotal);
+    formatearMoneda(subtotalUSD);
 }
 
 // Función para calcular totales (nuevo combo)
@@ -227,9 +245,11 @@ function calcularTotales() {
   const productos = document.querySelectorAll(
     "#productos-container .producto-container"
   );
-  let costoTotal = 0;
-  let precioTotal = 0;
-  let gananciaTotal = 0;
+  let costoTotalCUP = 0;
+  let precioTotalUSD = 0;
+  let gananciaTotalCUP = 0;
+  const tasaDolar =
+    parseFloat(document.getElementById("tasa-dolar").value) || 1;
 
   productos.forEach((prod) => {
     const cantidad =
@@ -238,19 +258,29 @@ function calcularTotales() {
     const precio =
       parseFloat(prod.querySelector(".producto-precio").value) || 0;
 
-    costoTotal += cantidad * costo;
-    precioTotal += cantidad * precio;
-    gananciaTotal += cantidad * (precio - costo);
+    costoTotalCUP += cantidad * costo;
+    precioTotalUSD += cantidad * precio;
+    gananciaTotalCUP += precio * tasaDolar * cantidad - costo * cantidad;
   });
 
-  document.getElementById("costo-total").textContent =
-    formatearMoneda(costoTotal);
-  document.getElementById("precio-total").textContent =
-    formatearMoneda(precioTotal);
-  document.getElementById("ganancia-total").textContent =
-    formatearMoneda(gananciaTotal);
+  const precioTotalCUP = precioTotalUSD * tasaDolar;
 
-  return { costoTotal, precioTotal, gananciaTotal };
+  document.getElementById("costo-total").textContent =
+    formatearMoneda(costoTotalCUP);
+  document.getElementById("precio-total").textContent =
+    formatearMoneda(precioTotalUSD);
+  document.getElementById("precio-total-cup").textContent =
+    formatearMoneda(precioTotalCUP);
+  document.getElementById("ganancia-total").textContent =
+    formatearMoneda(gananciaTotalCUP);
+
+  return {
+    costoTotalCUP,
+    precioTotalUSD,
+    gananciaTotalCUP,
+    precioTotalCUP,
+    tasaDolar,
+  };
 }
 
 // Función para actualizar totales (editar combo)
@@ -258,9 +288,11 @@ function actualizarTotalesEdicion() {
   const productos = document.querySelectorAll(
     "#editar-productos-container .producto-container"
   );
-  let costoTotal = 0;
-  let precioTotal = 0;
-  let gananciaTotal = 0;
+  let costoTotalCUP = 0;
+  let precioTotalUSD = 0;
+  let gananciaTotalCUP = 0;
+  const tasaDolar =
+    parseFloat(document.getElementById("editar-tasa-dolar").value) || 1;
 
   productos.forEach((prod) => {
     const cantidad =
@@ -269,19 +301,29 @@ function actualizarTotalesEdicion() {
     const precio =
       parseFloat(prod.querySelector(".producto-precio").value) || 0;
 
-    costoTotal += cantidad * costo;
-    precioTotal += cantidad * precio;
-    gananciaTotal += cantidad * (precio - costo);
+    costoTotalCUP += cantidad * costo;
+    precioTotalUSD += cantidad * precio;
+    gananciaTotalCUP += precio * tasaDolar * cantidad - costo * cantidad;
   });
 
-  document.getElementById("editar-costo-total").textContent =
-    formatearMoneda(costoTotal);
-  document.getElementById("editar-precio-total").textContent =
-    formatearMoneda(precioTotal);
-  document.getElementById("editar-ganancia-total").textContent =
-    formatearMoneda(gananciaTotal);
+  const precioTotalCUP = precioTotalUSD * tasaDolar;
 
-  return { costoTotal, precioTotal, gananciaTotal };
+  document.getElementById("editar-costo-total").textContent =
+    formatearMoneda(costoTotalCUP);
+  document.getElementById("editar-precio-total").textContent =
+    formatearMoneda(precioTotalUSD);
+  document.getElementById("editar-precio-total-cup").textContent =
+    formatearMoneda(precioTotalCUP);
+  document.getElementById("editar-ganancia-total").textContent =
+    formatearMoneda(gananciaTotalCUP);
+
+  return {
+    costoTotalCUP,
+    precioTotalUSD,
+    gananciaTotalCUP,
+    precioTotalCUP,
+    tasaDolar,
+  };
 }
 
 // Función para guardar combo (nuevo o edición)
@@ -305,9 +347,22 @@ function guardarCombo(esEdicion) {
     ? document.getElementById("editar-estado").value
     : "pendiente";
 
+  const tasaDolar = esEdicion
+    ? parseFloat(document.getElementById("editar-tasa-dolar").value)
+    : parseFloat(document.getElementById("tasa-dolar").value);
+
   // Validar campos obligatorios
-  if (!cliente || !telefono) {
-    mostrarNotificacion("Nombre y teléfono son campos obligatorios", "error");
+  if (
+    !cliente ||
+    !telefono ||
+    !tasaDolar ||
+    isNaN(tasaDolar) ||
+    tasaDolar <= 0
+  ) {
+    mostrarNotificacion(
+      "Nombre, teléfono y tasa de dólar son campos obligatorios",
+      "error"
+    );
     return;
   }
 
@@ -337,8 +392,8 @@ function guardarCombo(esEdicion) {
         cantidad,
         costo,
         precio,
-        subtotal: cantidad * precio,
-        ganancia: cantidad * (precio - costo),
+        subtotalUSD: cantidad * precio,
+        gananciaCUP: precio * tasaDolar * cantidad - costo * cantidad,
       });
     }
   });
@@ -348,9 +403,13 @@ function guardarCombo(esEdicion) {
     return;
   }
 
-  const { precioTotal, gananciaTotal, costoTotal } = esEdicion
-    ? actualizarTotalesEdicion()
-    : calcularTotales();
+  const {
+    precioTotalUSD,
+    gananciaTotalCUP,
+    costoTotalCUP,
+    precioTotalCUP,
+    tasaDolar: tasaActual,
+  } = esEdicion ? actualizarTotalesEdicion() : calcularTotales();
 
   const combos = JSON.parse(localStorage.getItem("combos")) || [];
   const comboOriginal = esEdicion ? combos.find((c) => c.id === id) : null;
@@ -361,9 +420,11 @@ function guardarCombo(esEdicion) {
     direccion,
     telefono,
     productos,
-    precioTotal,
-    gananciaTotal,
-    costoTotal,
+    precioTotalUSD,
+    gananciaTotalCUP,
+    costoTotalCUP,
+    precioTotalCUP,
+    tasaDolar: tasaActual,
     estado,
     fecha:
       comboOriginal?.fecha ||
@@ -397,7 +458,7 @@ function validarNumeroPositivo(value) {
 }
 
 function formatearMoneda(valor) {
-  return `$${parseFloat(valor).toFixed(2)}`;
+  return parseFloat(valor).toFixed(2);
 }
 
 function mostrarNotificacion(mensaje, tipo = "success") {
