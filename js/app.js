@@ -628,17 +628,14 @@ function cambiarCantidadProducto(index, delta) {
 
 // ========== MODAL PARA AGREGAR PRODUCTO ==========
 function abrirModalAgregarProducto() {
-  // Usamos el mismo modal de edición pero para agregar
-  productoEditandoIndex = null; // null indica que es nuevo
-  
-  // Limpiar campos
+  productoEditandoIndex = null;
+
   document.querySelector(".input-edition-product-name").value = "";
   document.querySelector(".input-edition-product-cost").value = "";
   document.querySelector(".input-edition-product-sold").value = "";
-  
-  // Cambiar título del modal
+
   document.querySelector(".modal-title").textContent = "Agregar Producto";
-  
+
   const modalContainer = document.querySelector(".modal-edition-container");
   const modal = document.querySelector(".modal-edition");
   modalContainer.style.display = "flex";
@@ -661,7 +658,6 @@ function initModalEdicion() {
     modal.style.scale = "0";
     setTimeout(() => {
       modalContainer.style.display = "none";
-      // Restaurar título
       document.querySelector(".modal-title").textContent = "Editar Producto";
     }, 300);
   }
@@ -677,9 +673,16 @@ function initModalEdicion() {
     const pedido = pedidos.find((p) => p.id === pedidoActualId);
     if (!pedido) return;
 
-    const nombre = document.querySelector(".input-edition-product-name")?.value.trim() || "";
-    const costo = parseFloat(document.querySelector(".input-edition-product-cost")?.value) || 0;
-    const venta = parseFloat(document.querySelector(".input-edition-product-sold")?.value) || 0;
+    const nombre =
+      document.querySelector(".input-edition-product-name")?.value.trim() || "";
+    const costo =
+      parseFloat(
+        document.querySelector(".input-edition-product-cost")?.value,
+      ) || 0;
+    const venta =
+      parseFloat(
+        document.querySelector(".input-edition-product-sold")?.value,
+      ) || 0;
 
     if (!nombre) {
       alert("El nombre es requerido");
@@ -687,7 +690,6 @@ function initModalEdicion() {
     }
 
     if (productoEditandoIndex !== null) {
-      // Editar producto existente
       pedido.productos[productoEditandoIndex] = {
         ...pedido.productos[productoEditandoIndex],
         nombre,
@@ -695,7 +697,6 @@ function initModalEdicion() {
         venta,
       };
     } else {
-      // Agregar nuevo producto
       pedido.productos.push({
         id: generarId(),
         nombre,
@@ -778,73 +779,81 @@ function initZelleSettings() {
   });
 }
 
-// ========== DATOS DE EJEMPLO ==========
-function cargarDatosEjemplo() {
-  if (pedidos.length > 0) return;
+// ========== DETECCIÓN OFFLINE PARA iOS ==========
+function initOfflineDetection() {
+  const offlineIndicator = document.createElement("div");
+  offlineIndicator.style.cssText = `
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #f44336;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: bold;
+    z-index: 9999;
+    display: none;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    white-space: nowrap;
+    backdrop-filter: blur(10px);
+  `;
+  offlineIndicator.textContent = "📴 Modo offline - Funcionando";
+  document.body.appendChild(offlineIndicator);
 
-  pedidos = [
-    {
-      id: generarId(),
-      cliente: { nombre: "María González", telefono: "555-1234" },
-      entrega: {
-        nombre: "María González",
-        direccion: "Calle Principal 123",
-        telefono: "555-1234",
-      },
-      productos: [
-        {
-          id: generarId(),
-          nombre: "Combo Familiar",
-          cantidad: 2,
-          costo: 25,
-          venta: 35,
-        },
-        {
-          id: generarId(),
-          nombre: "Bebida Grande",
-          cantidad: 3,
-          costo: 5,
-          venta: 8,
-        },
-      ],
-      estado: ESTADOS.PENDIENTE,
-      fecha: new Date().toISOString(),
-    },
-    {
-      id: generarId(),
-      cliente: { nombre: "Carlos Pérez", telefono: "555-5678" },
-      entrega: {
-        nombre: "Carlos Pérez",
-        direccion: "Av. Libertad 456",
-        telefono: "555-5678",
-      },
-      productos: [
-        {
-          id: generarId(),
-          nombre: "Combo Individual",
-          cantidad: 1,
-          costo: 15,
-          venta: 20,
-        },
-      ],
-      estado: ESTADOS.POR_ENTREGAR,
-      fecha: new Date(Date.now() - 86400000).toISOString(),
-    },
-  ];
-  guardarPedidos();
+  function updateOnlineStatus() {
+    if (navigator.onLine) {
+      offlineIndicator.style.display = "block";
+      offlineIndicator.style.backgroundColor = "#00ab64";
+      offlineIndicator.textContent = "✅ Conexión restablecida";
+      setTimeout(() => {
+        offlineIndicator.style.display = "none";
+      }, 2000);
+    } else {
+      offlineIndicator.style.display = "block";
+      offlineIndicator.style.backgroundColor = "#f44336";
+      offlineIndicator.textContent = "📴 Modo offline - Funcionando";
+      setTimeout(() => {
+        offlineIndicator.style.opacity = "0.7";
+      }, 3000);
+    }
+  }
+
+  window.addEventListener("online", updateOnlineStatus);
+  window.addEventListener("offline", updateOnlineStatus);
+
+  if (!navigator.onLine) {
+    updateOnlineStatus();
+  }
 }
 
-// ----SERVICES WORKER----
+function verificarStorageOffline() {
+  try {
+    localStorage.setItem("test_offline", "1");
+    localStorage.removeItem("test_offline");
+    console.log("✅ LocalStorage disponible offline");
+  } catch (e) {
+    console.error("❌ LocalStorage no disponible:", e);
+  }
+}
+
+// ========== SERVICE WORKER ==========
 function registrarServiceWorker() {
   if ("serviceWorker" in navigator) {
     const basePath = location.pathname.substring(
       0,
       location.pathname.lastIndexOf("/") + 1,
     );
+
     navigator.serviceWorker
       .register(basePath + "sw.js")
       .then((registration) => {
-        console.log("✅ Service Worker registrado:", registration.scope);
+        console.log("🍎 Service Worker iOS registrado:", registration.scope);
+        registration.update();
+        setInterval(() => {
+          registration.update();
+        }, 3600000);
       })
       .catch((error) => {
         console.log("❌ Error Service Worker:", error);
@@ -854,13 +863,13 @@ function registrarServiceWorker() {
 
 // ========== INICIALIZACIÓN ==========
 function init() {
-  cargarDatosEjemplo();
   initFiltros();
   initFormularioPedido();
   initPantallaDetalles();
   initZelleSettings();
+  initOfflineDetection();
+  verificarStorageOffline();
 
-  // Corregir typo en HTML (sapn -> span)
   const filterDelivery = document.querySelector("sapn.filter-delivery");
   if (filterDelivery) {
     const span = document.createElement("span");

@@ -1,7 +1,7 @@
 {
   "name": "Gestor de Combos",
   "short_name": "Combos",
-  "description": "Aplicación para gestión de pedidos y combos",
+  "description": "Gestión de pedidos y combos offline",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -9,6 +9,7 @@
   "theme_color": "#00ab64",
   "background_color": "#ffffff",
   "categories": ["business", "productivity"],
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "assets/icons/icon-180px.png",

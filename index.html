@@ -9,8 +9,6 @@
 
     <!-- PWA Meta Tags -->
     <meta name="mobile-web-app-capable" content="yes" />
-
-    <!-- Soporte legacy para iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta
       name="apple-mobile-web-app-status-bar-style"
@@ -18,9 +16,17 @@
     />
     <meta name="apple-mobile-web-app-title" content="Gestor Combos" />
 
-    <!-- Configuración general -->
+    <!-- CRÍTICO para offline iOS -->
     <meta name="format-detection" content="telephone=no" />
     <meta name="theme-color" content="#00ab64" />
+
+    <!-- Prevenir caché agresiva de Safari -->
+    <meta
+      http-equiv="Cache-Control"
+      content="no-cache, no-store, must-revalidate"
+    />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json" />
@@ -35,6 +41,22 @@
       rel="apple-touch-icon"
       sizes="512x512"
       href="assets/icons/icon-512px.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="180x180"
+      href="assets/icons/icon-180px.png"
+    />
+
+    <!-- Precargar recursos críticos -->
+    <link rel="preload" href="css/main.css" as="style" />
+    <link rel="preload" href="js/app.js" as="script" />
+    <link
+      rel="preload"
+      href="assets/fonts/Ultra-Regular.ttf"
+      as="font"
+      crossorigin
     />
     <!-- ----FAVICON---- -->
     <link
@@ -147,7 +169,7 @@
         </div>
         <button class="save-order-btn">Guardar pedido</button>
       </section>
-      <section class="screen screen-order-details ">
+      <section class="screen screen-order-details">
         <div class="section-title-container">
           <i class="icon-back iconoir-arrow-left-circle-solid"></i>
           <h1 class="section-title">Detalles del Pedido</h1>
