@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+
+    <!-- PWA Meta Tags -->
+    <meta name="mobile-web-app-capable" content="yes" />
+
+    <!-- Soporte legacy para iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Gestor Combos" />
+
+    <!-- Configuración general -->
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="theme-color" content="#00ab64" />
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json" />
+
+    <!-- Apple Touch Icons -->
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="assets/icons/icon-180px.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="512x512"
+      href="assets/icons/icon-512px.png"
+    />
+    <!-- ----FAVICON---- -->
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="180x180"
+      href="assets/icons/icon-180px.png"
+    />
+
+    <!-- ====CSS==== -->
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/icons/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="css/icons/iconoir.css" />
+
+    <title>Gestor de Combos</title>
+  </head>
+  <body>
+    <header>
+      <h1 class="header-title">Gestor de Combos</h1>
+      <i class="bi bi-gear"></i>
+      <div class="setting-container">
+        <div class="setting-container-header">
+          <span class="setting-container-title"
+            >Establezca el valor del Zelle</span
+          >
+        </div>
+        <div class="setting-container-body">
+          <span class="input-setting-description">1 Zelle =</span>
+          <input type="number" class="setting-zelle-value" />
+          <span class="input-setting-coin">CUP</span>
+        </div>
+        <div class="setting-container-footer">
+          <button class="btn-save-zelle-value">
+            <i class="bi bi-floppy"></i>Guardar
+          </button>
+        </div>
+      </div>
+    </header>
+    <main>
+      <section class="screen screen-orders-list screen-active">
+        <div class="filters-container">
+          <span class="filter filter-all filter-active">Todos</span>
+          <span class="filter filter-pending">Pendiente</span>
+          <span class="filter filter-finished">Por Entregar</span>
+          <span class="filter filter-delivery">Entregados</span>
+        </div>
+        <div class="orders-list-container">
+          <!-- ----SE GENERA DINAMICAMENTE---- -->
+        </div>
+        <div class="fab-add-order">
+          <i class="bi bi-plus"></i>
+        </div>
+      </section>
+      <section class="screen screen-add-order">
+        <div class="section-title-container">
+          <i class="icon-back iconoir-arrow-left-circle-solid"></i>
+          <h1 class="section-title">Añadir Pedido</h1>
+        </div>
+        <div class="inputs-container inputs-client-data-container">
+          <span class="title-container">Datos del cliente</span>
+          <input type="text" class="input-client-name" placeholder="Nombre" />
+          <input type="tel" class="input-client-phone" placeholder="Teléfono" />
+        </div>
+        <div class="inputs-container inputs-delivery-data-container">
+          <span class="title-container">Datos de la entrega</span>
+          <input type="text" class="input-delivery-name" placeholder="Nombre" />
+          <input
+            type="text"
+            class="input-delivery-direction"
+            placeholder="Dirección"
+          />
+          <input
+            type="tel"
+            class="input-delivery-phone"
+            placeholder="Teléfono"
+          />
+        </div>
+        <div class="inputs-container inputs-add-products-container">
+          <span class="title-container">Añadir producto</span>
+          <input
+            type="text"
+            class="input-product-name"
+            placeholder="Nombre del producto"
+          />
+          <input
+            type="number"
+            class="input-product-quanty"
+            placeholder="Cantidad"
+          />
+          <input
+            type="number"
+            class="input-product-price-cost"
+            placeholder="Precio costo"
+          />
+          <input
+            type="number"
+            class="input-product-price-sold"
+            placeholder="Precio de venta"
+          />
+          <button class="btn-add-product">Agregar producto</button>
+
+          <div class="list-products-add-container">
+            <!-- ----SE GENERA DINAMICAMENTE A MEDIDA QUE SE VAYAN AGREGANDO LOS PRODUCTOS---- -->
+          </div>
+          <div class="products-totals-prices-container">
+            <span class="products-total-price-cost">Costo Total: 0 CUP</span>
+            <span class="products-total-price-sold">Venta Total: 0 Zelle</span>
+            <span class="products-total-revenue">Ganancia Total: 0 CUP</span>
+          </div>
+        </div>
+        <button class="save-order-btn">Guardar pedido</button>
+      </section>
+      <section class="screen screen-order-details ">
+        <div class="section-title-container">
+          <i class="icon-back iconoir-arrow-left-circle-solid"></i>
+          <h1 class="section-title">Detalles del Pedido</h1>
+        </div>
+        <div class="order-client-details-container">
+          <!-- ----SE GENERA DINAMICAMENTE, MUESTRA NOMBRE, TELEFONO, DIRECCION, Y FECHA---- -->
+        </div>
+        <div class="products-details-title-container">
+          <span class="products-details-title">Productos</span>
+          <button class="btn-add-product-order">Agregar Producto</button>
+        </div>
+        <div class="list-products-details-container">
+          <!-- ----SE GENERA DINAMICAMENTE---- -->
+        </div>
+        <div class="products-totals-prices-container">
+          <span class="products-total-price-cost">Costo Total: 0 CUP</span>
+          <span class="products-total-price-sold">Venta Total: 0 Zelle</span>
+          <span class="products-total-revenue">Ganancia Total: 0 CUP</span>
+        </div>
+        <!-- ====MODAL DE EDICION==== -->
+        <div class="modal-edition-container">
+          <div class="modal-edition">
+            <div class="modal-header">
+              <span class="modal-title">Editar Producto</span>
+              <i class="iconoir-xmark"></i>
+            </div>
+            <div class="modal-body">
+              <input
+                type="text"
+                class="input-edition-product-name"
+                placeholder="Nombre del producto"
+              />
+              <input
+                type="text"
+                class="input-edition-product-cost"
+                placeholder="Precio costo"
+              />
+              <input
+                type="text"
+                class="input-edition-product-sold"
+                placeholder="Precio venta"
+              />
+            </div>
+            <div class="modal-footer">
+              <button class="btn-save-changes">Guardar Cambios</button>
+              <button class="btn-cancel-changes">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ====SCRIPTS==== -->
+    <script src="js/app.js"></script>
+  </body>
+</html>
